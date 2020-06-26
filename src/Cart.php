@@ -577,11 +577,15 @@ class Cart
      *
      * @return void
      */
-    public function setDiscount($rowId, $discount)
+    public function setDiscount($rowId, $discount, $fixed = false)
     {
         $cartItem = $this->get($rowId);
 
-        $cartItem->setDiscountRate($discount);
+        if($fixed) {
+            $cartItem->setFixedDiscount($discount);
+        } else {
+            $cartItem->setDiscountRate($discount);
+        }
 
         $content = $this->getContent();
 

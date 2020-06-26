@@ -91,6 +91,10 @@ class CartItem implements Arrayable, Jsonable
      */
     private $discountRate = 0;
 
+
+    private $fixedDiscount = 0;
+    private $fixed = false;
+
     /**
      * CartItem constructor.
      *
@@ -368,6 +372,14 @@ class CartItem implements Arrayable, Jsonable
         return $this;
     }
 
+    public function setFixedDiscount($discount)
+    {
+        $this->fixedDiscount = $discount;
+        $this->fixed = true;
+
+        return $this;
+    }
+
     /**
      * Get an attribute from the cart item or get the associated model.
      *
@@ -400,6 +412,9 @@ class CartItem implements Arrayable, Jsonable
                 case 'priceNet':
                     return round($this->price / (1 + ($this->taxRate / 100)), $decimals);
                 case 'discount':
+                    if($this->fixed) {
+                        return $this->fixedDiscount;
+                    }
                     return $this->priceNet * ($this->discountRate / 100);
                 case 'tax':
                     return round($this->priceTarget * ($this->taxRate / 100), $decimals);
@@ -423,6 +438,9 @@ class CartItem implements Arrayable, Jsonable
         } else {
             switch ($attribute) {
                 case 'discount':
+                    if($this->fixed) {
+                        return $this->fixedDiscount;
+                    }
                     return $this->price * ($this->discountRate / 100);
                 case 'tax':
                     return round($this->priceTarget * ($this->taxRate / 100), $decimals);
